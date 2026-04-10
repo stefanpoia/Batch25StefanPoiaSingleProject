@@ -8,7 +8,7 @@ Feature: Edit Contact Information
     When user clicks on My Info option
     And the employee navigates to the contact details page
     And updates the address from the first street "Windsteiner Weg 36"
-    And updates the address from the second street "Eiserfelder Ring 24"
+    And updates the address from the second street "Eiserfelder Ring 25"
     And updates the city "Berlin"
     And updates the state "Brandenburg"
     And updates the zip code "14165"
