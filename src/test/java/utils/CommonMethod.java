@@ -28,9 +28,16 @@ public class CommonMethod extends PageInitializer{
         switch (ConfigReader.read("browser")){
 
             case "Chrome":
+               // ChromeOptions options = new ChromeOptions();
+                //options.addArguments("--headless");
+               // driver=new ChromeDriver();
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--headless");
-                driver=new ChromeDriver();
+                options.addArguments("--disable-gpu");
+                options.addArguments("--window-size=1920,1080");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                driver = new ChromeDriver(options);
                 break;
             case "FireFox":
                 driver=new FirefoxDriver();
@@ -44,7 +51,7 @@ public class CommonMethod extends PageInitializer{
             default:
                 throw new RuntimeException("Invalid Browser Name");
         }
-        driver.manage().window().maximize();
+       // driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         driver.get(ConfigReader.read("url"));
         initializePageObjects();
