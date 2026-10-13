@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Employees API" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
+    <option name="CUCUMBER_CORE_VERSION" value="7" />
+    <option name="FILE_PATH" value="$PROJECT_DIR$/src/test/resources/api/EmployeesApi.feature" />
+    <option name="MAIN_CLASS_NAME" value="io.cucumber.core.cli.Main" />
+    <module name="GroupProject" />
+    <option name="PROGRAM_PARAMETERS" value="--glue api.steps --plugin pretty --plugin html:target/api-cucumber.html --plugin json:target/api-cucumber.json --plugin rerun:target/api-failed.txt" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

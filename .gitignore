@@ -37,3 +37,16 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/screenshots/
+/src/test/resources/config/config.local.properties
+
+# Private configuration files
+**/config.properties
+**/config.local.properties
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log

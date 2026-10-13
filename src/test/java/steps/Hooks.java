@@ -6,13 +6,15 @@ import io.cucumber.java.Scenario;
 import utils.CommonMethod;
 
 public class Hooks extends CommonMethod {
-    @Before
+    @Before("not @api")
     public void start() {
         openBrowserAndLaunchApplication();
     }
 
-    @After
+    @After(value = "not @api", order = 20)
     public void end(Scenario scenario){
+        try {
+        if (driver == null) return;
         byte[] pic;
         if(scenario.isFailed()) {
             pic = takeScreenshot("failed/"+scenario.getName());
@@ -21,8 +23,13 @@ public class Hooks extends CommonMethod {
         }
         scenario.attach(pic,"image/png",scenario.getName());
 
-        closeBrowser();
+        } catch (org.openqa.selenium.WebDriverException e) {
+            scenario.log("Screenshot unavailable: " + e.getClass().getSimpleName());
+        }
 
     }
+
+    @After(value = "not @api", order = 0)
+    public void stop() { closeBrowser(); }
 
 }

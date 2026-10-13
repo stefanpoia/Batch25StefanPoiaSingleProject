@@ -16,7 +16,7 @@ Feature: Edit Contact Information
     And updates home phone number "345-345-678"
     And updates mobile phone number "004917677387986"
     And updates work phone number "455-334-455"
-    And updates work email address "admin1@yahoo.com"
-    And updates other email address "admin6@yahoo.com"
+    And updates work email address "hrms{unique}@example.com"
+    And updates other email address "hrms{unique}@example.org"
     And user clicks on save button
     Then the contact details should be updated in the database

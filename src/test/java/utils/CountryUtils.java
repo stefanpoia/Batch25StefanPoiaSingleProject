@@ -1,22 +1,11 @@
 package utils;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.Locale;
 public class CountryUtils {
-
-    private static final Map<String, String> COUNTRY_MAP = new HashMap<>();
-
-    static {
-        COUNTRY_MAP.put("germany", "DE");
-        COUNTRY_MAP.put("romania", "RO");
-        COUNTRY_MAP.put("france", "FR");
-        COUNTRY_MAP.put("italy", "IT");
-    }
-
-    public static String toCountryCode(String countryName) {
-        if (countryName == null) {
-            return null;
+    public static String toCountryCode(String name) {
+        if (name == null || name.trim().isEmpty()) throw new IllegalArgumentException("Country is required");
+        for (String code : Locale.getISOCountries()) {
+            if (code.equalsIgnoreCase(name.trim()) || new Locale("", code).getDisplayCountry(Locale.ENGLISH).equalsIgnoreCase(name.trim())) return code;
         }
-        return COUNTRY_MAP.getOrDefault(countryName.trim().toLowerCase(), countryName);
+        throw new IllegalArgumentException("Unknown country: " + name);
     }
 }

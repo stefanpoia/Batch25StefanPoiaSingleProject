@@ -8,7 +8,7 @@ import utils.CommonMethod;
 public class ContactDetailsPage extends CommonMethod {
 
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[1]/aside/nav/div[2]/div/div/input")
+    @FindBy(css = "input[placeholder='Search']")
     public WebElement Search_Field;
 
     @FindBy(xpath = "//*[text()='My Info']")
@@ -17,44 +17,44 @@ public class ContactDetailsPage extends CommonMethod {
     @FindBy(xpath = "(//*[text()='Contact Details'])[1]")
     public WebElement contactDetails;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[1]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Street 1']]//input")
     public WebElement addressStreet1_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[2]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Street 2']]//input")
     public WebElement addressStreet2_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[3]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='City']]//input")
     public WebElement city_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[4]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='State/Province']]//input")
     public WebElement state_province_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[5]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Zip/Postal Code']]//input")
     public WebElement zipcode_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[6]/div/div[2]/div/div/div[2]/i")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Country']]//div[contains(@class,'oxd-select-text')]")
     public WebElement getCountry_DDF_button_Field;
 
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[2]/div/div[1]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Home']]//input")
     public WebElement home_telephone_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[2]/div/div[2]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Mobile']]//input")
     public WebElement mobile_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[2]/div/div[3]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Work']]//input")
     public WebElement work_telephone_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[3]/div/div[1]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Work Email']]//input")
     public WebElement work_email_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[3]/div/div[2]/div/div[2]/input")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Other Email']]//input")
     public WebElement other_email_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[4]/button")
+    @FindBy(xpath = "//form[.//label[normalize-space()='Street 1']]//button[@type='submit']")
     public WebElement saveButton_Field;
 
-    @FindBy(xpath = "//*[@id=\"app\"]/div[1]/div[2]/div[2]/div/div/div/div[2]/div[1]/form/div[1]/div/div[6]/div/div[2]/div/div/div[2]/i")
+    @FindBy(xpath = "//div[contains(@class,'oxd-input-group')][.//label[normalize-space()='Country']]//div[contains(@class,'oxd-select-text')]")
     public WebElement countryDropdown;
 
     public ContactDetailsPage() {

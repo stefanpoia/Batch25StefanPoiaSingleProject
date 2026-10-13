@@ -1,6 +1,7 @@
 Feature: User story for login scenarios
 
-  Background: Given user is able to access HRMS application
+  Background:
+    Given user is able to access HRMS application
 
   @smoke  @sprint1
   Scenario: Valid admin login

@@ -1,52 +1,31 @@
 package utils;
-
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.io.*;
+import java.util.*;
 public class ExcelReader {
-    public static List<Map<String,String>> read(String path, String sheetName) throws IOException {
-        List<Map<String,String>> excelData = new ArrayList<>();
-
-        try{
-            FileInputStream fis=new FileInputStream(path);
-            XSSFWorkbook xssfWorkbook=new XSSFWorkbook(fis);
-            Sheet sheet=xssfWorkbook.getSheet(sheetName);
-            int noOfActualRowsWithData=sheet.getPhysicalNumberOfRows();
-            Row headerRow=sheet.getRow(0);
-            for (int i = 1; i <noOfActualRowsWithData ; i++) {
-                Row currentRow=sheet.getRow(i);
-                Map<String,String> rowMap=new LinkedHashMap<>();
-                int noOfActualCellsWithData=currentRow.getPhysicalNumberOfCells();
-                for (int j = 0; j <noOfActualCellsWithData ; j++) {
-                    String key=headerRow.getCell(j).toString();
-                    String value=currentRow.getCell(j).toString();
-                    rowMap.put(key,value);
+    public static List<Map<String, String>> read(String path, String sheetName) throws IOException {
+        try (InputStream input = new FileInputStream(path); XSSFWorkbook workbook = new XSSFWorkbook(input)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            if (sheet == null || sheet.getRow(0) == null) throw new IllegalArgumentException("Missing sheet or header: " + sheetName);
+            Row header = sheet.getRow(0);
+            DataFormatter formatter = new DataFormatter(Locale.ROOT);
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            List<Map<String, String>> rows = new ArrayList<>();
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row current = sheet.getRow(i);
+                if (current == null) continue;
+                Map<String, String> values = new LinkedHashMap<>();
+                for (int j = 0; j < header.getLastCellNum(); j++) {
+                    String key = formatter.formatCellValue(header.getCell(j)).trim();
+                    if (key.isEmpty() || values.containsKey(key)) throw new IllegalArgumentException("Empty or duplicate Excel header at column " + j);
+                    values.put(key, formatter.formatCellValue(current.getCell(j), evaluator));
                 }
-
-                excelData.add(rowMap);
+                rows.add(values);
             }
-
-        }catch (IOException e){
-            e.printStackTrace();
+            return rows;
         }
-        return excelData;
-
     }
-
-
-    public static List<Map<String,String>> read(String sheetName) throws IOException {
-        return read(Constants.EXCEL_FILE_PATH,sheetName);
-    }
-
-    public static List<Map<String,String>> read() throws IOException {
-        return read(Constants.EXCEL_FILE_PATH,"Sheet1");
-    }
+    public static List<Map<String, String>> read(String sheetName) throws IOException { return read(ConfigReader.read("excelPath"), sheetName); }
+    public static List<Map<String, String>> read() throws IOException { return read("Sheet1"); }
 }

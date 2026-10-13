@@ -10,7 +10,7 @@ import utils.ConfigReader;
 public class LoginSteps extends CommonMethod {
     @Given("user is able to access HRMS application")
     public void user_is_able_to_access_hrms_application() {
-        openBrowserAndLaunchApplication();
+        getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(loginPage.usernameField));
     }
 
     @When("user clicks on login button")
@@ -20,7 +20,7 @@ public class LoginSteps extends CommonMethod {
 
     @Then("user is able to login successfully")
     public void user_is_able_to_login_successfully() {
-        Assert.assertTrue(dashboardPage.welcomeScreenLoc.isDisplayed());
+        Assert.assertTrue(getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(dashboardPage.welcomeScreenLoc)).isDisplayed());
         System.out.println("Test passed");
     }
     @When("user enters valid admin username and password")
@@ -38,11 +38,13 @@ public class LoginSteps extends CommonMethod {
 
     @Then("user see {string}")
     public void user_see(String errorMessage) {
-        Assert.assertEquals("Not correct ,error message is displayed",errorMessage,loginPage.errorMessageLoc.getText());
+        Assert.assertEquals("Unexpected login error", errorMessage, getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(loginPage.errorMessageLoc)).getText());
     }
     @Then("user will see {string}")
     public void error_required(String errorMessage1) {
-        Assert.assertEquals("Not correct ,error message is displayed",errorMessage1,loginPage.errorMessageRequired.getText());
+        int expectedCount = loginPage.usernameField.getAttribute("value").isEmpty() && loginPage.passwordField.getAttribute("value").isEmpty() ? 2 : 1;
+        getwait().until(d -> d.findElements(org.openqa.selenium.By.xpath("//span[text()='Required']")).size() == expectedCount);
+        for (org.openqa.selenium.WebElement error : driver.findElements(org.openqa.selenium.By.xpath("//span[text()='Required']"))) Assert.assertEquals(errorMessage1, error.getText());
     }
 
 }

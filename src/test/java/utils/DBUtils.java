@@ -1,49 +1,22 @@
 package utils;
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 public class DBUtils {
-
-    public static List<Map<String,String>> fetch(String query){
-
-
-        String dburl=ConfigReader.read("dbURL");
-        String userName=ConfigReader.read("dbUserName");
-        String password=ConfigReader.read("dbPassword");
-
-        List<Map<String,String>> mapList=new ArrayList<>();
-
-        try( Connection connection= DriverManager.getConnection(dburl,userName,password);
-
-             Statement statement=connection.createStatement()) {
-            ResultSet resultSet=statement.executeQuery(query);
-            ResultSetMetaData rsmd=resultSet.getMetaData();
-            while (resultSet.next()){
-
-                Map<String,String> rowMap=new LinkedHashMap<>();
-                for (int i = 1; i <=rsmd.getColumnCount() ; i++) {
-                    String key= rsmd.getColumnLabel(i);
-                    String value=resultSet.getString(i);
-                    rowMap.put(key,value);
+    public static List<Map<String, String>> fetch(String query, Object... parameters) {
+        try (Connection connection = DriverManager.getConnection(ConfigReader.read("dbURL"), ConfigReader.read("dbUserName"), ConfigReader.read("dbPassword"));
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setQueryTimeout(Integer.parseInt(ConfigReader.read("dbTimeout")));
+            for (int i = 0; i < parameters.length; i++) statement.setObject(i + 1, parameters[i]);
+            List<Map<String, String>> rows = new ArrayList<>();
+            try (ResultSet results = statement.executeQuery()) {
+                ResultSetMetaData metadata = results.getMetaData();
+                while (results.next()) {
+                    Map<String, String> row = new LinkedHashMap<>();
+                    for (int i = 1; i <= metadata.getColumnCount(); i++) row.put(metadata.getColumnLabel(i), results.getString(i));
+                    rows.add(row);
                 }
-
-                mapList.add(rowMap);
-
             }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-
-        return mapList;
-
-
+            return rows;
+        } catch (SQLException e) { throw new IllegalStateException("Database query failed", e); }
     }
-
 }
