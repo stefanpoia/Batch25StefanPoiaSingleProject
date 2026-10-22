@@ -160,8 +160,23 @@ public class UpdateContactDetailsSteps extends CommonMethod {
             contactDetailsPage.work_email_Field, contactDetailsPage.other_email_Field};
     }
     private void waitForContactForm() {
-        getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated(org.openqa.selenium.By.cssSelector(".oxd-form-loader")));
         getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(contactDetailsPage.addressStreet1_Field));
+        getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated(org.openqa.selenium.By.cssSelector(".oxd-form-loader, .oxd-loading-spinner")));
+        getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable(contactDetailsPage.addressStreet1_Field));
+    }
+    private void waitForContactValues(Map<org.openqa.selenium.WebElement, String> values, String country) {
+        // The SPA renders empty inputs before the asynchronous contact request completes.
+        // Wait for the persisted values, including legitimate empty optional fields.
+        getwait().until(d -> {
+            try {
+                for (Map.Entry<org.openqa.selenium.WebElement, String> entry : values.entrySet()) {
+                    if (!entry.getValue().equals(entry.getKey().getAttribute("value"))) return false;
+                }
+                return country == null || country.equals(contactDetailsPage.countryDropdown.getText().trim());
+            } catch (org.openqa.selenium.StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
+                return false;
+            }
+        });
     }
     private void waitForSave() {
         try {
@@ -178,6 +193,7 @@ public class UpdateContactDetailsSteps extends CommonMethod {
         for (int i = 0; i < inputs.length; i++) if (values[i] != null) expected.put(inputs[i], values[i]);
         driver.navigate().refresh();
         waitForContactForm();
+        waitForContactValues(expected, countryFE);
         for (Map.Entry<org.openqa.selenium.WebElement, String> entry : expected.entrySet()) {
             Assert.assertEquals("Saved contact value", entry.getValue(), entry.getKey().getAttribute("value"));
         }
@@ -238,6 +254,7 @@ public class UpdateContactDetailsSteps extends CommonMethod {
         waitForSave();
         driver.navigate().refresh();
         waitForContactForm();
+        waitForContactValues(original, originalCountry);
         for (Map.Entry<org.openqa.selenium.WebElement, String> entry : original.entrySet()) Assert.assertEquals("Restored contact value", entry.getValue(), entry.getKey().getAttribute("value"));
         Assert.assertEquals("Restored country", originalCountry, contactDetailsPage.countryDropdown.getText().trim());
     }
