@@ -188,16 +188,37 @@ public class UpdateContactDetailsSteps extends CommonMethod {
         getwait().until(org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated(org.openqa.selenium.By.cssSelector(".oxd-toast--success")));
     }
     private void verifyPersistedValues() {
-        String[] values = {street1FE, street2FE, cityFE, stateFE, zipFE, homePhoneNumberFE, mobilePhoneNumberFE, workPhoneNumberFE, workEmailFE, otherEmailFE};
-        org.openqa.selenium.WebElement[] inputs = fields();
-        for (int i = 0; i < inputs.length; i++) if (values[i] != null) expected.put(inputs[i], values[i]);
+
+        String[] values = {
+                street1FE, street2FE, cityFE, stateFE, zipFE,
+                homePhoneNumberFE, mobilePhoneNumberFE,
+                workPhoneNumberFE, workEmailFE, otherEmailFE
+        };
+
         driver.navigate().refresh();
         waitForContactForm();
-        waitForContactValues(expected, countryFE);
-        for (Map.Entry<org.openqa.selenium.WebElement, String> entry : expected.entrySet()) {
-            Assert.assertEquals("Saved contact value", entry.getValue(), entry.getKey().getAttribute("value"));
-        }
-        if (countryFE != null) Assert.assertEquals(countryFE, contactDetailsPage.countryDropdown.getText().trim());
+
+        getwait().until(d -> {
+            try {
+                org.openqa.selenium.WebElement[] inputs = fields();
+
+                for (int i = 0; i < inputs.length; i++) {
+                    if (values[i] != null &&
+                            !values[i].equals(inputs[i].getAttribute("value"))) {
+                        return false;
+                    }
+                }
+
+                return countryFE == null ||
+                        countryFE.equals(
+                                contactDetailsPage.countryDropdown.getText().trim()
+                        );
+
+            } catch (org.openqa.selenium.StaleElementReferenceException |
+                     org.openqa.selenium.NoSuchElementException e) {
+                return false;
+            }
+        });
     }
     @Then("the contact details should remain saved after reloading")
     public void contactDetailsRemainSaved() { verifyPersistedValues(); }
