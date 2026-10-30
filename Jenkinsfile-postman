@@ -2,11 +2,9 @@
 pipeline {
     agent any
 
-
 environment {
-    "PATH+NEWMAN" = 'C:\\Users\\User\\AppData\\Roaming\\npm'
+    NEWMAN_DIR = 'C:\\Users\\User\\AppData\\Roaming\\npm'
 }
-
 
     options {
         timestamps()
@@ -20,13 +18,15 @@ environment {
             }
         }
 
-        stage('Check Newman') {
-            steps {
-                bat 'node --version'
-                bat 'npm --version'
-                bat 'newman --version'
-            }
-        }
+        
+stage('Check Newman') {
+    steps {
+        bat 'node --version'
+        bat 'npm --version'
+        bat '"%NEWMAN_DIR%\\newman.cmd" --version'
+    }
+}
+
 
         stage('Run Postman API Tests') {
             steps {
