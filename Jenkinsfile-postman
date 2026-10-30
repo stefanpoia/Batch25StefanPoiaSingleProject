@@ -2,9 +2,11 @@
 pipeline {
     agent any
 
+
 environment {
-    PATH+NEWMAN = 'C:\\Users\\User\\AppData\\Roaming\\npm'
+    "PATH+NEWMAN" = 'C:\\Users\\User\\AppData\\Roaming\\npm'
 }
+
 
     options {
         timestamps()
