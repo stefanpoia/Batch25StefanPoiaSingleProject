@@ -43,6 +43,8 @@ stage('Run Postman API Tests') {
     }
 }
 
+}
+
 
     post {
         always {
