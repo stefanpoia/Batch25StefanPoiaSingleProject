@@ -1,0 +1,37 @@
+
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Check Newman') {
+            steps {
+                bat 'node --version'
+                bat 'npm --version'
+                bat 'newman --version'
+            }
+        }
+
+        stage('Run Postman API Tests') {
+            steps {
+                echo 'SCRUM-6: API tests will be configured after environment and credentials verification.'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'SCRUM-6 Jenkins Pipeline finished.'
+        }
+    }
+}
