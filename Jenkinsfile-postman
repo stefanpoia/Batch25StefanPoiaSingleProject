@@ -28,12 +28,21 @@ stage('Check Newman') {
 }
 
 
-        stage('Run Postman API Tests') {
-            steps {
-                echo 'SCRUM-6: API tests will be configured after environment and credentials verification.'
-            }
+       
+stage('Run Postman API Tests') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'hrms-login',
+            usernameVariable: 'HRMS_USER',
+            passwordVariable: 'HRMS_PASSWORD'
+        )]) {
+            bat '''
+                "%NEWMAN_DIR%\\newman.cmd" run "Syntax HRMS API Testing - SCRUM-6.postman_collection.json" --env-var "baseUrl=https://syntaxhrm.com" --env-var "username=%HRMS_USER%" --env-var "password=%HRMS_PASSWORD%"
+            '''
         }
     }
+}
+
 
     post {
         always {
