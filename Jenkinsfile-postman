@@ -2,9 +2,9 @@
 pipeline {
     agent any
 
-environment {
-    NEWMAN_DIR = 'C:\\Users\\User\\AppData\\Roaming\\npm'
-}
+    environment {
+        NEWMAN_DIR = 'C:\\Users\\User\\AppData\\Roaming\\npm'
+    }
 
     options {
         timestamps()
@@ -18,36 +18,40 @@ environment {
             }
         }
 
-        
-stage('Check Newman') {
-    steps {
-        bat 'node --version'
-        bat 'npm --version'
-        bat '"%NEWMAN_DIR%\\newman.cmd" --version'
-    }
-}
+        stage('Check Newman') {
+            steps {
+                bat 'node --version'
+                bat 'npm --version'
+                bat '"%NEWMAN_DIR%\\newman.cmd" --version'
+                bat 'npm list -g newman-reporter-htmlextra'
+            }
+        }
 
+        stage('Run Postman API Tests') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'hrms-login',
+                    usernameVariable: 'HRMS_USER',
+                    passwordVariable: 'HRMS_PASSWORD'
+                )]) {
+                    bat '''
+                        if not exist reports mkdir reports
 
-       
-stage('Run Postman API Tests') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'hrms-login',
-            usernameVariable: 'HRMS_USER',
-            passwordVariable: 'HRMS_PASSWORD'
-        )]) {
-            bat '''
-                "%NEWMAN_DIR%\\newman.cmd" run "Syntax HRMS API Testing - SCRUM-6.postman_collection.json" --env-var "baseUrl=https://syntaxhrm.com" --env-var "username=%HRMS_USER%" --env-var "password=%HRMS_PASSWORD%"
-            '''
+                        "%NEWMAN_DIR%\\newman.cmd" run "Syntax HRMS API Testing - SCRUM-6.postman_collection.json" --env-var "baseUrl=https://syntaxhrm.com" --env-var "username=%HRMS_USER%" --env-var "password=%HRMS_PASSWORD%" -r cli,htmlextra,junit --reporter-htmlextra-export "reports\\newman-report.html" --reporter-junit-export "reports\\newman-results.xml"
+                    '''
+                }
+            }
         }
     }
-}
-
-}
-
 
     post {
         always {
+            junit allowEmptyResults: true,
+                  testResults: 'reports/newman-results.xml'
+
+            archiveArtifacts artifacts: 'reports/*.html',
+                             allowEmptyArchive: true
+
             echo 'SCRUM-6 Jenkins Pipeline finished.'
         }
     }
