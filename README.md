@@ -2,6 +2,29 @@
 
 **End-to-End QA Automation Project | Java | Selenium | Cucumber | REST Assured | Postman | Newman | Jenkins**
 
+## 🏆 Project Highlights
+
+| Metric | Result |
+|---|---|
+| API Requests Executed | 19 |
+| API Assertions Passed | 84 / 84 |
+| Failed Assertions | 0 |
+| Jenkins CI/CD | Build #12 - SUCCESS |
+| UI Automation | Selenium WebDriver + Cucumber BDD |
+| API Automation | Postman + Newman + REST Assured |
+| Database Validation | MySQL + JDBC |
+
+### Key Achievements
+
+- Developed automated UI and API tests for HRMS employee management workflows.
+- Implemented positive and negative testing scenarios, including employee CRUD operations.
+- Integrated Postman API testing with Newman and Jenkins CI/CD.
+- Achieved 84 passing API assertions with zero failures in the documented Jenkins execution.
+- Implemented database validation and data persistence checks.
+- Used GitHub pull requests and Jira tasks to organize and track testing activities.
+
+---
+
 ## Project Overview
 
 This project demonstrates practical Software Quality Assurance (QA) and Test Automation skills through automated testing of the Syntax HRMS application.
