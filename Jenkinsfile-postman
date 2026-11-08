@@ -23,7 +23,7 @@ pipeline {
                 bat 'node --version'
                 bat 'npm --version'
                 bat '"%NEWMAN_DIR%\\newman.cmd" --version'
-                bat 'npm list -g newman-reporter-htmlextra'
+                bat 'if not exist "%NEWMAN_DIR%\\node_modules\\newman-reporter-htmlextra\\package.json" exit /b 1'
             }
         }
 
