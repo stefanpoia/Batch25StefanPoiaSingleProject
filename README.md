@@ -1,4 +1,55 @@
-# HRMS automated tests
+# HRMS Test Automation Framework
+
+**End-to-End QA Automation Project | Java | Selenium | Cucumber | REST Assured | Postman | Newman | Jenkins**
+
+## Project Overview
+
+This project demonstrates practical Software Quality Assurance (QA) and Test Automation skills through automated testing of the Syntax HRMS application.
+
+The framework covers UI testing, API testing, employee CRUD operations, positive and negative test scenarios, data persistence validation, and continuous integration.
+
+### Technologies Used
+
+- **Programming:** Java, JavaScript, SQL
+- **UI Automation:** Selenium WebDriver, Cucumber BDD
+- **API Testing:** Postman, REST Assured, Newman
+- **Build & Dependency Management:** Maven
+- **CI/CD:** Jenkins
+- **Database Testing:** MySQL, JDBC
+- **Version Control:** Git, GitHub
+- **Project Management:** Jira
+- **Test Reporting:** Cucumber HTML Reports, Newman HTML Extra Reporter
+
+## API Automation Results – SCRUM-6
+
+The Syntax HRMS Postman API test suite was executed using Newman and integrated with Jenkins.
+
+| Metric | Result |
+|---|---|
+| API Requests | 19 |
+| Assertions | 84 |
+| Passed Assertions | 84 |
+| Failed Assertions | 0 |
+| Jenkins Build | #12 – SUCCESS |
+
+The automated API tests cover authentication, employee creation, retrieval, updates, deletion, response validation, and negative testing.
+
+## UI Automation – SCRUM-5
+
+Improved employee contact details validation using Selenium WebDriver and Cucumber BDD.
+
+Key testing activities include:
+
+- Automated UI validation
+- Data persistence verification
+- Positive and negative test scenarios
+- Database verification using MySQL
+- Automated test execution and reporting
+- GitHub pull request and code review workflow
+
+---
+
+## Selenium UI Automation – Technical Documentation
 
 Selenium / Cucumber / JUnit tests for login and employee contact details, with optional MySQL verification.
 
@@ -78,4 +129,37 @@ Configuratie: `apiBaseUrl` (implicit `https://www.syntaxhrm.com/web/index.php`) 
 Executia Maven implicita include acum ambele suite si testele locale. Rapoarte API: `target/api-cucumber.html`, `target/api-cucumber.json`, `target/api-failed.txt`. Nu executa mai multe comenzi Maven simultan. Nu loga cookie-uri, parole sau raspunsuri cu date HR in rapoarte.
 
 Validare pe 12 octombrie 2026: toate cele 6 scenarii API au trecut live pe SyntaxHRM, iar cele 5 teste locale ale clientului au trecut. Au fost confirmate statusurile 200, 401 si 422, contractul JSON, login-ul prin locatori si cookie-urile de sesiune. Detaliile folosesc ruta `/api/v2/pim/employees/{empNumber}/personal-details`; ruta simpla de detalii a returnat 405 pe aceasta instalare. Compilarea si dry-run pentru toate cele 18 scenarii UI/API au trecut, impreuna cu cele 6 teste UtilitiesTest. Sandboxul a blocat initial reteaua si serverul loopback; validarile au reusit la executia autorizata in afara sandboxului. Scenariile API citesc date; nu creeaza, modifica sau sterg angajati.
+## Postman, Newman & Jenkins CI/CD
 
+**Jira Task:** SCRUM-6 – Implement API Testing for Syntax HRMS using Postman
+
+### API Test Coverage
+
+The Postman collection includes automated tests for:
+
+- Authentication with valid and invalid credentials
+- GET requests for employee information
+- POST requests to create employees
+- PUT requests to update employee information
+- DELETE requests to remove employees
+- Positive and negative API testing
+- HTTP status code and JSON response validation
+- End-to-end employee CRUD workflows
+
+### Automated Execution
+
+The Postman collection was executed using Newman and integrated into a Jenkins CI pipeline.
+
+**Verified execution results:**
+- 19 API requests executed
+- 84 assertions passed
+- 0 assertion failures
+- Jenkins Build #12: SUCCESS
+
+### Test Reporting
+
+Newman HTML Extra Reporter was used to generate detailed HTML reports containing API execution results, assertion outcomes, and test statistics.
+
+### Security
+
+Authentication credentials and tokens are managed through environment variables rather than being hardcoded in the Postman collection.
