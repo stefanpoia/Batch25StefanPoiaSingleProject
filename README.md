@@ -92,43 +92,123 @@ Reports: `target/cucumber.html`, `target/cucumber.json`, `target/surefire-report
 
 ExcelReader is optional and does not require a bundled workbook. Set `excelPath` or `HRMS_EXCEL_PATH` to your own file when using it; sheet/header validation, sparse rows, blank cells, formulas and formatted values are supported.
 
-## Modul API SyntaxHRM (REST Assured / Cucumber)
+## SyntaxHRM API Testing Module (REST Assured / Cucumber)
 
-Modulul API foloseste rutele v2 ale aplicatiei configurate, conform [rutelor oficiale OrangeHRM](https://github.com/orangehrm/orangehrm/wiki/5.x-advanced-guide). Nu foloseste endpointurile legacy v1 sau un token Bearer inventat.
+The API testing module uses the configured application's v2 endpoints, following the [official OrangeHRM documentation](https://github.com/orangehrm/orangehrm/wiki/5.x-advanced-guide). It does not use legacy v1 endpoints or a fabricated Bearer token.
 
-Structura:
-- `src/test/resources/api/EmployeesApi.feature`: 6 scenarii pentru acces anonim, lista angajatilor, paginare, detalii si offset invalid.
-- `src/test/java/api/steps/ApiSteps.java`: toti pasii implementati, autentificare si asertiuni JSON/status.
-- `src/test/java/api/client/HrmsApiClient.java`: client REST Assured separat pentru fiecare scenariu, timeout si cookie-uri de sesiune.
-- `src/test/java/runners/ApiRunnerClass.java` si `ApiFailedRunner.java`: executie si rerun API, rapoarte separate.
-- `src/test/java/api/client/HrmsApiClientTest.java`: teste locale cu server HTTP pentru rute, query, izolarea sesiunii si redirecturi.
+### Project Structure
 
-Autentificarea API deschide browserul, foloseste LoginPage, asteapta confirmarea autentificarii, preia cookie-urile si inchide browserul. Cererile ulterioare sunt HTTP GET prin REST Assured. Verificarea originii impiedica trimiterea cookie-urilor spre alt server. Scenariile anonime nu deschid browserul; hook-urile UI sunt in alt pachet glue.
+- `src/test/resources/api/EmployeesApi.feature`: Contains 6 scenarios covering anonymous access, employee listing, pagination, employee details, and invalid offsets.
+- `src/test/java/api/steps/ApiSteps.java`: Implements all API step definitions, authentication, and JSON/status code assertions.
+- `src/test/java/api/client/HrmsApiClient.java`: Provides a REST Assured client with per-scenario isolation, timeouts, and session cookie management.
+- `src/test/java/runners/ApiRunnerClass.java` and `ApiFailedRunner.java`: Execute API tests, rerun failed scenarios, and generate separate reports.
+- `src/test/java/api/client/HrmsApiClientTest.java`: Contains local HTTP server tests for endpoints, query parameters, session isolation, and redirects.
+- 
+### API Authentication
 
-Locatorii formularului au fost verificati in DOM-ul live pe 12 octombrie 2026: `input[name='username']`, `input[name='password']`, `button[type='submit']`; formularul trimite catre `/web/index.php/auth/validate` si contine `_token`. API-ul nu foloseste locatori; acestia sunt necesari doar pentru login-ul UI. Confirmarea login-ului reutilizeaza locatorul DashboardPage existent.
+API authentication is performed through the browser using Selenium WebDriver and the existing LoginPage.
 
-Configuratie: `apiBaseUrl` (implicit `https://www.syntaxhrm.com/web/index.php`) si `apiTimeout` (milisecunde, implicit 20000), suprascrise prin `-DapiBaseUrl`, `-DapiTimeout`, `HRMS_API_BASE_URL`, `HRMS_API_TIMEOUT`. Foloseste credentialele locale `userName` / `password` deja configurate si un cont cu acces de citire PIM. Scenariul de detalii necesita cel putin un angajat vizibil.
+The framework waits for successful authentication, extracts the session cookies, and closes the browser.
+
+Subsequent HTTP GET requests are executed using REST Assured with the authenticated session cookies.
+
+Origin validation prevents session cookies from being sent to a different server.
+
+Anonymous API scenarios do not launch a browser, and UI hooks are isolated in a separate Cucumber glue package.
+
+### Login Form Validation
+
+The login form locators were verified against the live application's DOM on October 12, 2026:
+
+- Username: `input[name='username']`
+- Password: `input[name='password']`
+- Submit button: `button[type='submit']`
+
+The login form submits authentication requests to `/web/index.php/auth/validate` and includes a `_token` field.
+
+These locators are used exclusively for UI-based authentication and are not part of the REST Assured API requests.
+
+Successful authentication is confirmed using the existing DashboardPage locator.
+
+### API Configuration
+
+The API testing module supports the following configuration properties:
+
+- `apiBaseUrl`: Base URL of the SyntaxHRM application (default: `https://www.syntaxhrm.com/web/index.php`).
+- `apiTimeout`: API request timeout in milliseconds (default: `20000`).
+
+These properties can be overridden using Java system properties:
+
+- `-DapiBaseUrl`
+- `-DapiTimeout`
+
+Alternatively, environment variables can be used:
+
+- `HRMS_API_BASE_URL`
+- `HRMS_API_TIMEOUT`
+
+The module uses the locally configured `userName` and `password` credentials.
+
+An account with PIM read permissions is required. The employee details scenario requires at least one accessible employee record.
+
 
 ```powershell
-# Toate scenariile API
+# Run all API scenarios
 .\mvnw.cmd '-Dtest=ApiRunnerClass' test
-# API smoke (anonim + lista autentificata)
+
+# API smoke tests (anonymous + authenticated employee list)
 .\mvnw.cmd '-Dtest=ApiRunnerClass' '-Dcucumber.filter.tags=@apiSmoke' test
-# Fara credentiale sau browser
+
+# Run anonymous API tests without credentials or browser
 .\mvnw.cmd '-Dtest=ApiRunnerClass' '-Dcucumber.filter.tags=@apiAnonymous' test
-# Verificarea tuturor pasilor API fara acces la server
+
+# Validate API step definitions without accessing the server
 .\mvnw.cmd '-Dtest=ApiRunnerClass' '-Dcucumber.execution.dry-run=true' test
-# Teste locale ale clientului API
+
+# Run local API client tests
 .\mvnw.cmd '-Dtest=HrmsApiClientTest' test
-# Rerun API
+
+# Rerun failed API scenarios
 .\mvnw.cmd '-Dtest=ApiFailedRunner' test
-# Doar suita UI
+
+# Run UI tests only
 .\mvnw.cmd '-Dtest=RunnerClass' test
 ```
 
-Executia Maven implicita include acum ambele suite si testele locale. Rapoarte API: `target/api-cucumber.html`, `target/api-cucumber.json`, `target/api-failed.txt`. Nu executa mai multe comenzi Maven simultan. Nu loga cookie-uri, parole sau raspunsuri cu date HR in rapoarte.
 
-Validare pe 12 octombrie 2026: toate cele 6 scenarii API au trecut live pe SyntaxHRM, iar cele 5 teste locale ale clientului au trecut. Au fost confirmate statusurile 200, 401 si 422, contractul JSON, login-ul prin locatori si cookie-urile de sesiune. Detaliile folosesc ruta `/api/v2/pim/employees/{empNumber}/personal-details`; ruta simpla de detalii a returnat 405 pe aceasta instalare. Compilarea si dry-run pentru toate cele 18 scenarii UI/API au trecut, impreuna cu cele 6 teste UtilitiesTest. Sandboxul a blocat initial reteaua si serverul loopback; validarile au reusit la executia autorizata in afara sandboxului. Scenariile API citesc date; nu creeaza, modifica sau sterg angajati.
+### Test Execution and Reporting
+
+The default Maven execution includes both UI and API test suites, along with local utility tests.
+
+API test reports are generated at:
+
+- `target/api-cucumber.html`
+- `target/api-cucumber.json`
+- `target/api-failed.txt`
+
+Do not execute multiple Maven commands simultaneously in the same project directory.
+
+Avoid logging session cookies, passwords, or HR employee data in test reports.
+
+### API Test Validation Results – October 12, 2026
+
+All 6 API scenarios were successfully executed against the live SyntaxHRM application, along with 5 local API client tests.
+
+The following validations were completed:
+
+- HTTP status codes: 200, 401, and 422
+- JSON response structure and contract validation
+- UI-based authentication and session cookie handling
+- Employee details retrieval using `/api/v2/pim/employees/{empNumber}/personal-details`
+- Compilation and dry-run validation of all 18 UI/API scenarios
+- Successful execution of 6 utility tests
+
+The alternative employee details endpoint returned HTTP 405 in this environment.
+
+Initial sandbox network restrictions prevented external and local server access. All validations succeeded when executed in an authorized environment outside the sandbox.
+
+The REST Assured scenarios are read-only and do not create, modify, or delete employee records.
+
 ## Postman, Newman & Jenkins CI/CD
 
 **Jira Task:** SCRUM-6 – Implement API Testing for Syntax HRMS using Postman
